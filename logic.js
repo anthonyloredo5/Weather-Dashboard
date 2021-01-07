@@ -5,12 +5,12 @@ $(document).ready(function () {
 
 
     $("#search-button").on("click", function () {
-       
+
 
         var searchValue = $("#search-value").val();
         console.log(searchValue);
 
-        if(searchValue.length > 0){
+        if (searchValue.length > 0) {
 
 
             $(".cName").html("");
@@ -38,7 +38,7 @@ $(document).ready(function () {
                     //access specific data from response
                     //builds today card
                     //retireves and converts temp data
-                    var KtoF = response.main.temp * 9/5-459.67;
+                    var KtoF = response.main.temp * 9 / 5 - 459.67;
                     var fKtoF = KtoF.toFixed(1);
                     console.log(fKtoF);
 
@@ -54,15 +54,15 @@ $(document).ready(function () {
 
             })
         }
-         
 
-        function uvIndex(lat, lon){
+
+        function uvIndex(lat, lon) {
             var uvUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
 
             $.ajax({
                 type: "GET",
                 url: uvUrl,
-                success: function(response){
+                success: function (response) {
                     console.log(response);
                     $(".uvIndex").append("UV Index: " + response.value);
 
@@ -70,45 +70,73 @@ $(document).ready(function () {
                 }
             })
         }
-        
-        function foreCast(lat, lon){
+
+        function foreCast(lat, lon) {
             var fURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=hourly&appid=" + apiKey;
 
             $(".col-sm-2").html("");
+            $(".forecast").html("");
 
             $.ajax({
                 type: "GET",
                 url: fURL,
-                success: function(response){
-                    console.log(response , "forcast");
-                    var mDiv = $("<div>");
-                    var tDiv = $("<div>");
-                    var wDiv = $("<div>");
-                    var rDiv = $("<div>");
-                    var fDiv = $("<div>");
+                success: function (response) {
+                    console.log(response, "forcast");
+                    for (var i = 1; i < 6; i++) {
+                        //block
+                        var mDiv = $("<div>");
+                        //time div inside block
+                        var tDiv = $("<div>");
+                        //temp div inside block
+                        var temp = $("<div>");
+                        //hUmidity div inside block
+                        var humidity = $("<div>");
+                        //icon div
+                        var icon = $("<img>");
 
-                    mDiv.addClass("col-sm-2 card-body card");
-                    tDiv.addClass("col-sm-2 card-body card");
-                    wDiv.addClass("col-sm-2 card-body card");
-                    rDiv.addClass("col-sm-2 card-body card");
-                    fDiv.addClass("col-sm-2 card-body card");
-                    mDiv.css("background-color", "#0099FF");
-                    tDiv.css("background-color", "#0099FF");
-                    wDiv.css("background-color", "#0099FF");
-                    rDiv.css("background-color", "#0099FF");
-                    fDiv.css("background-color", "#0099FF");
-                    var oneD = moment().add(1, 'days');
-                    console.log(oneD);
-                    mDiv.html(oneD);
+                        //forms date
+                        var oneD = moment().add(i, 'days').format('MM/DD/YYYY');
+                        console.log(oneD);
 
-                    $(".forecast").append(mDiv);
-                    $(".forecast").append(tDiv);
-                    $(".forecast").append(wDiv);
-                    $(".forecast").append(rDiv);
-                    $(".forecast").append(fDiv);
+                        //kelvin to f converter
+                        t = response.daily[i].temp.day;
+                        var KtoF = t * 9 / 5 - 459.67;
+                        var fKtoF = KtoF.toFixed(1);
+                        console.log(fKtoF);
 
+                        //humidity getter
+                        var h = response.daily[i].humidity;
 
+                        //icon accessor
+                        var iconApi = response.daily[i].weather[0].icon;
+                        var iconURL = "http://openweathermap.org/img/w/" + iconApi + ".png";
+                        console.log(response.daily[i].weather[0].icon);
 
+                        //styling and additions
+                        mDiv.addClass("col-sm-2 card-body card");
+                        mDiv.css("background-color", "#0099FF");
+
+                        tDiv.css("font-weight", "900");
+                        tDiv.css("color", "white");
+                        tDiv.html(oneD);
+
+                        temp.css("color", "white");
+                        temp.html("Temp: " + fKtoF);
+
+                        humidity.css("color", "white");
+                        humidity.html("Humidity: " + h + "%");
+
+                        icon.attr('src', iconURL);
+                        
+                        
+                        //to the page
+                        mDiv.append(tDiv);
+                        mDiv.append(icon);
+                        mDiv.append(temp);
+                        mDiv.append(humidity);
+                        $(".forecast").append(mDiv);
+
+                    }
 
                 }
             })
