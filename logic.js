@@ -2,6 +2,8 @@ $(document).ready(function () {
     console.log(moment().format('L'));
     //put the data on the page
     var currentDate = (moment().format('L'));
+    var hArray = [];  
+    
 
 
     $("#search-button").on("click", function () {
@@ -9,6 +11,11 @@ $(document).ready(function () {
 
         var searchValue = $("#search-value").val();
         console.log(searchValue);
+
+        //to store history to local storage
+        hArray.push(searchValue);
+        localStorage.setItem('history', JSON.stringify(hArray));
+
 
         if (searchValue.length > 0) {
 
@@ -23,6 +30,10 @@ $(document).ready(function () {
             newLi.addClass("list-group-item");
             $(".history").append(newLi.append(searchValue));
             $("#search-value").val("");
+
+            //local storage set and get
+            var lsItem = newLi;
+            console.log(lsItem.val(), "appplpelplps");
 
             var apiKey = "58ceaad44652a8be4772292ae8aa41bc";
             var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=" + apiKey;
@@ -127,6 +138,9 @@ $(document).ready(function () {
                         humidity.html("Humidity: " + h + "%");
 
                         icon.attr('src', iconURL);
+                        icon.css("max-width: 1px");
+                        // icon.css("");
+
                         
                         
                         //to the page
@@ -138,11 +152,24 @@ $(document).ready(function () {
 
                     }
 
+
                 }
             })
         }
 
     });
+
+    //history selector -- using local storage
+    function hSelector(){
+        //get data from history div and s
+        var myVar = $("#search-value");
+        myVar = myVar.toString();
+
+        
+        localStorage.setItem("history", myVar);
+        
+    }
+
 
 
 });
