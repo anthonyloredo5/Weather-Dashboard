@@ -4,7 +4,7 @@ This application uses multiple API calls to display current weather data along w
 
 ## Screenshot
 
-![Screenshot](https://github.com/anthonyloredo5/Weather-Dashboard/blob/main/Assets/06-server-side-apis-homework-demo.png)
+![Screenshot](https://github.com/anthonyloredo5/Weather-Dashboard/blob/main/Assets/Screen%20Shot%202021-01-08%20at%203.29.07%20AM.png)
 
 ## Link to Deployed Application
 
