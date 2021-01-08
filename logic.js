@@ -54,7 +54,7 @@ $(document).ready(function () {
 
 
         function uvIndex(lat, lon) {
-            var uvUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
+            var uvUrl = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
 
             $.ajax({
                 type: "GET",
