@@ -2,20 +2,18 @@ $(document).ready(function () {
     console.log(moment().format('L'));
     //put the data on the page
     var currentDate = (moment().format('L'));
-    var hArray = [];  
-    
-
+    var hArray = [];
+    var searchValue;
 
     $("#search-button").on("click", function () {
+        searchValue = $("#search-value").val();
+        main();
+        hSelector(searchValue);
+    });
 
+    function main() {
 
-        var searchValue = $("#search-value").val();
         console.log(searchValue);
-
-        //to store history to local storage
-        hArray.push(searchValue);
-        localStorage.setItem('history', JSON.stringify(hArray));
-
 
         if (searchValue.length > 0) {
 
@@ -25,20 +23,9 @@ $(document).ready(function () {
             $(".humidity").html("");
             $(".wSpeed").html("");
             $(".uvIndex").html("");
-            //generates history list 
-            var newLi = $("<li>");
-            newLi.addClass("list-group-item");
-            $(".history").append(newLi.append(searchValue));
-            $("#search-value").val("");
-
-            //local storage set and get
-            var lsItem = newLi;
-            console.log(lsItem.val(), "appplpelplps");
 
             var apiKey = "58ceaad44652a8be4772292ae8aa41bc";
             var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=" + apiKey;
-
-
 
             $.ajax({
                 type: "GET",
@@ -62,7 +49,6 @@ $(document).ready(function () {
                     foreCast(response.coord.lat, response.coord.lon);
                 }
 
-
             })
         }
 
@@ -76,8 +62,6 @@ $(document).ready(function () {
                 success: function (response) {
                     console.log(response);
                     $(".uvIndex").append("UV Index: " + response.value);
-
-
                 }
             })
         }
@@ -121,7 +105,18 @@ $(document).ready(function () {
                         //icon accessor
                         var iconApi = response.daily[i].weather[0].icon;
                         var iconURL = "http://openweathermap.org/img/w/" + iconApi + ".png";
-                        console.log(response.daily[i].weather[0].icon);
+                        console.log(response.daily[0].weather[0].icon, "ICCCCOOOONNNN");
+
+                        //if to only diplay icon once
+                        if (i == 1) {
+                            //take the data from inhere and use it to attach img
+                            var currentIconImg = $("<img>");
+                            var currentIcon = response.daily[0].weather[0].icon;
+                            currentIconURL = "http://openweathermap.org/img/w/" + currentIcon + ".png";
+
+                            currentIconImg.attr('src', currentIconURL);
+                            $(".cName").append(currentIconImg);
+                        }
 
                         //styling and additions
                         mDiv.addClass("col-sm-2 card-body card");
@@ -139,10 +134,7 @@ $(document).ready(function () {
 
                         icon.attr('src', iconURL);
                         icon.css("max-width: 1px");
-                        // icon.css("");
 
-                        
-                        
                         //to the page
                         mDiv.append(tDiv);
                         mDiv.append(icon);
@@ -151,25 +143,49 @@ $(document).ready(function () {
                         $(".forecast").append(mDiv);
 
                     }
-
-
                 }
             })
         }
-
-    });
-
-    //history selector -- using local storage
-    function hSelector(){
-        //get data from history div and s
-        var myVar = $("#search-value");
-        myVar = myVar.toString();
-
-        
-        localStorage.setItem("history", myVar);
-        
     }
 
 
+    //history selector -- using local storage
+    function hSelector(searchResult) {
+        $(".history").empty();
+        //to store history to local storage
+        hArray.push(searchResult);
+        localStorage.setItem('history', JSON.stringify(hArray));
 
+        //get items from local storage
+        var sArray = JSON.parse(localStorage.getItem('history'));
+        console.log(sArray);
+        var writeLi = false;
+
+        //check if searchReseult is eaqual to anything in the array
+        for (var i = 0; i < sArray.length; i++) {
+            if (searchResult == sArray[i]) {
+                writeLi = true;
+            }
+        }
+
+        // loop through local storage array and append them to the page
+        //if (writeLi == false) {
+        for (var i = 0; i < sArray.length; i++) {
+
+            //builds history list
+            var newLi = $("<li>");
+            newLi.addClass("list-group-item");
+            $(".history").append(newLi.append(sArray[i]));
+            $("#search-value").val("");
+
+            //make li clickable
+            newLi.css('cursor', 'pointer')
+                .click(function () {
+                    searchValue = $(this).text();
+                    main();
+                    console.log(searchValue);
+                });
+        }
+    }
 });
+
